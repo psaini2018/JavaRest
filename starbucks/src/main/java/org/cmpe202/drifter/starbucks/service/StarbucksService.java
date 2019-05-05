@@ -3,20 +3,31 @@ package org.cmpe202.drifter.starbucks.service;
 
 
 import java.util.ArrayList;
-import org.cmpe202.drifter.starbucks.model.StarbucksModel;
 import starbucks.*;
 
+/**
+* @author Drifter Group
+*          Paramdeep Saini, Julian Simon, Viswa, Sandhya
+*         
+*/
 
 public class StarbucksService {
 
-	private static AppAuthProxy app ;
+	private static starbucks.AppAuthProxy app;
+	
 		
 	public static AppAuthProxy getInstance() {
 		if ( app == null) {
-			app = new AppAuthProxy();	
+			app = new starbucks.AppAuthProxy();	
 		}
-		
-		
 		return app;
 	}
+
+	public String getScreenName() {
+		if ( app == null) {
+			return "Failed";	
+		}
+		return app.screen();
+	}
+	
 }
