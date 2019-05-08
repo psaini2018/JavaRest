@@ -49,54 +49,51 @@ import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 public class StarbucksResource {
 	
 	StarbucksService starbuckSvc = new StarbucksService();
-	StarbucksModel starbucksmodel = new StarbucksModel();
+	StarbucksModel starbucksmodel;
 	
 	private AppAuthProxy app;
 	
 	public StarbucksResource() {
 		app = starbuckSvc.getInstance();
+	    starbucksmodel = new StarbucksModel(app);
 	}
 	
 	@GET
 	public String starbucks() {
-		   return "Welcome to Starbucks!";
-		/*		   
-	       String[] lines ;
-	        app = starbuckSvc.getInstance();
-	        app.touch(1,5) ;  // 1
-	        app.touch(2,5) ;  // 2
-	        app.touch(3,5) ;  // 3
-	        app.touch(1,6) ;  // 4	              
-	        app.display() ;
-	        app.touch(2,4) ;
-	        return app.screen();	
-	        */        
+	        return app.screenContents();               
 	}
 
 	@GET
 	@Path("/screenname")
 	public String screenname() {	  
 		    app = starbuckSvc.getInstance();
-	        return app.screen();	        
+	        return app.screenContents();
 	}
+
 	
     @POST
     @Path("/login")
     public Response authenticateUser(@QueryParam("username") String username,
     		@QueryParam("password") String password) {
     	String token;	
+    	
         try {
             if (starbucksmodel.checkLogin(username, password)) {
             	 System.out.println("User Login Check Passed");
                token = starbucksmodel.getToken(username);
                if ( app.screen().equals("PinScreen")) {
-               app.touch(1,5) ;
-               app.touch(2,5) ;
-               app.touch(3,5) ;
-               app.touch(1,6) ;               
-               app.display();
+            	  
+            	   System.out.println("Password " + password);
+            	   starbucksmodel.enterInput(password);
                }
-               return Response.ok().header(AUTHORIZATION, "Bearer " + token).build();
+               if(app.screen().contentEquals("MyCards")) {
+
+            	   starbucksmodel.populateCards(username);
+            	   return Response.ok().header(AUTHORIZATION, "Bearer " + token).build();
+               }
+               else {
+            	   return Response.status(UNAUTHORIZED).build();
+               }
         } else  
         {
         	 System.out.println("Invalid Username and password");
@@ -148,59 +145,9 @@ public class StarbucksResource {
         scrName=app.screen();
         System.out.println("scrName :" + scrName);
         if ( scrName.equals("PinScreen")) {
-            app.touch(1,5) ;
-            app.touch(2,5) ;
-            app.touch(3,5) ;
-            app.touch(1,6) ;
-            System.out.println("Test3");
-            System.out.println("test4");
-            app.display();
-            app.execute("E");            
-            app.touch(1,1) ; // Add New Card
-            System.out.println("Test1");
-            System.out.println("test2");
-            // Card Id digits
-            app.touch(1,5); // 1
-            app.touch(2,5); // 2
-            app.touch(3,5); // 3
-            app.touch(1,6); // 4
-            app.touch(2,6); // 5
-            app.touch(3,6); // 6
-            app.touch(1,7); // 7
-            app.touch(2,7); // 8
-            app.touch(3,7); // 9
-            app.touch(2,3); // focus on card code
-            // Card Code digits
-            app.touch(3,7); // 9
-            app.touch(3,7); // 9
-            app.touch(3,7); // 9  
-            app.next();
-            app.display();
-       	
+        	returnStr = "Error occurred in card addition, please login with pin to add the card!";
         } else {
-            System.out.println("Test1");
-            System.out.println("test2");
-            app.display();
-        	System.out.println(scrName);
-        	app.execute("E") ; // Settings Page
-            app.touch(1,1) ; // Add New Card
-            // Card Id digits
-            app.touch(1,5); // 1
-            app.touch(2,5); // 2
-            app.touch(3,5); // 3
-            app.touch(1,6); // 4
-            app.touch(2,6); // 5
-            app.touch(3,6); // 6
-            app.touch(1,7); // 7
-            app.touch(2,7); // 8
-            app.touch(3,7); // 9
-            app.touch(2,3); // focus on card code
-            // Card Code digits
-            app.touch(3,7); // 9
-            app.touch(3,7); // 9
-            app.touch(3,7); // 9
-            app.next();
-            app.display();
+        	starbucksmodel.AddCard(cardNum, cardCode);
         }
         
         scrName=app.screen();

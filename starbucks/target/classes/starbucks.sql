@@ -47,6 +47,7 @@ create table cards (
   `user_id` varchar(40) not null,
   `card_num` varchar(9) not null,
   `card_code` varchar(3) not null,
+  `balance` varchar(6) not null,
   `created_on` datetime not null,
   primary key (`card_id`),
   constraint `fk_user_1`

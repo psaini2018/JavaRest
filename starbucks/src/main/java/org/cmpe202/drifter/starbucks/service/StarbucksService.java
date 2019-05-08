@@ -15,6 +15,9 @@ public class StarbucksService {
 
 	private static starbucks.AppAuthProxy app;
 	
+	public StarbucksService () {
+		
+	}
 		
 	public static AppAuthProxy getInstance() {
 		if ( app == null) {
