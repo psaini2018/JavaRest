@@ -44,6 +44,7 @@ public class StarbucksModel implements ICardInputObserver{
 
 	private static Connection con;
 	private AppAuthProxy app;
+	private Boolean initInProgress = true;
 
 	@Context
 	private UriInfo uriInfo;
@@ -351,6 +352,11 @@ public class StarbucksModel implements ICardInputObserver{
 		boolean action;
 		String returnStr,pin;
 
+		if(initInProgress == true) {
+			System.out.println("Init inprogress. Returning");
+			return;
+		}
+			
 		Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
 		UUID uuid = UUID.randomUUID();
 		String card_id;
@@ -426,6 +432,8 @@ public class StarbucksModel implements ICardInputObserver{
 
 	public void populateCards(String username) {
 		String user_id = getUserId();
+	
+		initInProgress = true;
 		
 		String search = "select card_num, card_code, balance from cards where user_id = ?;";
 		System.out.println("query : " + search + user_id);
@@ -437,18 +445,21 @@ public class StarbucksModel implements ICardInputObserver{
 			rs.last();           
 			int count =  rs.getRow();
 			System.out.println("Rows Count :" + count);
-			for(int i=0; i<count; i++) {
+			rs.first();
+			for(int i = 0; i<count; i++){
 				String cardNum = rs.getString("card_num");
 				String cardCode = rs.getString("card_code");
 				String balance  = rs.getString("balance");
 				System.out.println("Card Num: " + cardNum + " Code "+ cardCode + " Balance " + balance);
 				Cards.getInstance().setCardNumber(cardNum);
 				Cards.getInstance().setCardBalance(cardNum, Double.parseDouble(balance));
+				rs.next();
 			}
 		} catch (SQLException sqlEx) {
 			System.out.println("Return Statement: " );
 			sqlEx.printStackTrace();
 		}  
 
+		initInProgress = false;
 	}
 }
