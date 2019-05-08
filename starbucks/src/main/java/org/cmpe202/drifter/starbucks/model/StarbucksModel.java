@@ -44,7 +44,7 @@ public class StarbucksModel implements ICardInputObserver{
 
 	private static Connection con;
 	private AppAuthProxy app;
-	private Boolean initInProgress = true;
+	private Boolean initInProgress;
 
 	@Context
 	private UriInfo uriInfo;
@@ -58,6 +58,7 @@ public class StarbucksModel implements ICardInputObserver{
 	public StarbucksModel (AppAuthProxy app) {
 		Cards.getInstance().registerObserver(this);
 		this.app = app;
+		this.initInProgress = false;
 	}
 
 	public boolean isDigit(String str ) {
@@ -434,6 +435,7 @@ public class StarbucksModel implements ICardInputObserver{
 		String user_id = getUserId();
 	
 		initInProgress = true;
+		System.out.println(" set" + initInProgress);
 		
 		String search = "select card_num, card_code, balance from cards where user_id = ?;";
 		System.out.println("query : " + search + user_id);
@@ -461,5 +463,6 @@ public class StarbucksModel implements ICardInputObserver{
 		}  
 
 		initInProgress = false;
+		System.out.println(" reset" + initInProgress);
 	}
 }
