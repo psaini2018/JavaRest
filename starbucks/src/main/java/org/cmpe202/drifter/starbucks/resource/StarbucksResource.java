@@ -181,6 +181,19 @@ public class StarbucksResource {
 		return status;     	
 	}
 	
+	@GET
+	@Path("/menuItems")    
+    @IJWTTokenMgmt
+	public String menuItems() {
+		String returnStr;		
+		
+		System.out.println("Token Validation went fine");
+
+        returnStr ="dripcoffee   $1.50\n"; 
+        returnStr +="fancycoffee $2.50\n"; 
+
+		return returnStr;     	
+	}
 
 	@GET
 	@Path("/orderStatus")    
