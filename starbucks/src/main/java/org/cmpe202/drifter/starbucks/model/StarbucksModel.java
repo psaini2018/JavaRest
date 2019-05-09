@@ -718,12 +718,14 @@ public class StarbucksModel implements ICardInputObserver{
 				Timestamp updated = rs.getTimestamp("created_on");
 				System.out.println("Item : " + item + " price "+ price + " " + updated);
 				if(status.equals("PAID")) {
-					if(updated.compareTo(timestamp) >  2000) {
+					if ((timestamp.getTime()-updated.getTime()) > 2000) {
+						
 						status = "DELIVERED"; 
 					}
 				}
 				returnStr += "Item : " + item + " price "+ price + " " + status + "\n";
-				System.out.println("Item : " + item + " price "+ price + " " + updated);
+				System.out.println("Item : " + item + " price "+ price + " " + 
+				(timestamp.getTime()-updated.getTime()));
 				rs.next();
 			}
 		} catch (SQLException sqlEx) {
