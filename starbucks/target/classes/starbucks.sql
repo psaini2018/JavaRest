@@ -53,3 +53,15 @@ create table cards (
   constraint `fk_user_1`
     foreign key (user_id)
     references `starbucks`.`users`(user_id));
+
+create table orders (
+  `order_id` varchar(40) not null,
+  `user_id` varchar(40) not null,
+  `item` varchar(40) not null,
+  `status` varchar(12) not null,
+  `price` varchar(6) not null,
+  `created_on` datetime not null,
+  primary key (`order_id`),
+  constraint `fk_user_2`
+    foreign key (user_id)
+    references `starbucks`.`users`(user_id));

@@ -164,8 +164,41 @@ public class StarbucksResource {
 	}
 	
 	@POST
+	@Path("/orderCoffee")    
+    @IJWTTokenMgmt
+	public String orderCoffee(@QueryParam("coffeeName") String param1) {
+		String coffeeName, addon, status, returnStr;		
+		coffeeName=param1;
+		
+		System.out.println("Token Validation went fine");
+
+        returnStr ="Order being processed"; 
+
+        returnStr=starbucksmodel.processOrder(coffeeName);
+
+        status=starbucksmodel.orderCoffeeStatus(coffeeName, returnStr);
+
+		return status;     	
+	}
+	
+
+	@GET
+	@Path("/orderStatus")    
+    @IJWTTokenMgmt
+	public String orderStatus() {
+		String returnStr;		
+		
+		System.out.println("Token Validation went fine");
+
+        returnStr ="Order being processed"; 
+
+        returnStr=starbucksmodel.getCurrentOrders();
+
+		return returnStr;     	
+	}
+	@POST
 	@Path("/payment")    
-    //@IJWTTokenMgmt
+    @IJWTTokenMgmt
 	public String payment(@QueryParam("cardnumber") String param)
 	{
 		String scrName;

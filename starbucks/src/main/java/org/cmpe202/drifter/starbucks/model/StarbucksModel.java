@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -378,12 +377,69 @@ public class StarbucksModel implements ICardInputObserver{
 	
 	public double getOrderPrice()
 	{
-		return 1.50;
+		String user_id = getUserId();
+		Double retprice = 0.0;
+	
+		String search = "select item, price from orders where user_id = ? and status = ?;";
+		System.out.println("query : " + search + user_id);
+		try {
+			con = getDBConnection();
+			PreparedStatement preparedStmt = con.prepareStatement(search);
+			preparedStmt.setString (1, user_id);
+			preparedStmt.setString (2, "CREATED");
+			ResultSet rs = preparedStmt.executeQuery();
+			rs.last();           
+			int count =  rs.getRow();
+			System.out.println("Rows Count :" + count);
+			rs.first();
+			for(int i = 0; i<count; i++){
+				String item = rs.getString("item");
+				String price = rs.getString("price");
+				retprice += Double.parseDouble(price);
+				System.out.println("Item : " + item + " price "+ price);
+				rs.next();
+			}
+		} catch (SQLException sqlEx) {
+			System.out.println("Return Statement: " );
+			sqlEx.printStackTrace();
+		}  
+		
+		return retprice;
 	}
 	
 	public void updatePaymentStatus(String status)
 	{
 		//update the status in DB.
+		boolean action;
+		String returnStr,pin;
+
+		String user_id = getUserId();
+		PreparedStatement preparedStmt;
+
+		Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
+
+		try {
+			String query = " update starbucks.orders set status = ?, created_on = ? where (user_id = ? AND status = ?);";	    
+			preparedStmt = con.prepareStatement(query);
+			preparedStmt.setString (1, status);
+			preparedStmt.setTimestamp(2, timestamp);
+			preparedStmt.setString (3, user_id);
+			preparedStmt.setString (4, "CREATED");
+			int count = preparedStmt.executeUpdate();
+			if (count > 0) {
+				returnStr="Card Created Sucessfully";
+			} else {
+				returnStr="Error in User Creation";
+			}	            
+			System.out.println("Return Statement: " + returnStr);
+			con.close();
+		} catch (SQLException sqlEx) {
+			returnStr="Error in Payment Updation! Please Check StackTrace";
+			System.out.println("Return Statement: " + returnStr);
+			sqlEx.printStackTrace();
+		} 
+
+		return;
 	}
 	
 	//Scans the card
@@ -561,4 +617,121 @@ public class StarbucksModel implements ICardInputObserver{
 		initInProgress = false;
 		System.out.println(" reset" + initInProgress);
 	}
+	
+	
+	public String orderCoffeeStatus(String cardNum, String status) {
+		String jsonString;
+		JSONObject jo = new JSONObject();
+		jo.put("coffeeName", cardNum);
+		jo.put("Status", status);
+		jsonString = jo.toString();	  
+		return jsonString;  
+	}
+        
+
+	public String processOrder(String coffeeName) {
+		String returnStr;
+		String price;
+		String order_status;
+		UUID uuid = UUID.randomUUID();
+		String order_id = uuid.toString();
+		
+		if(coffeeName.equals("dripcoffee")) {
+			//Add to db the order id	
+			returnStr="Drip Coffee is ready. Please pay $1.50";
+			price = "1.50";
+			order_status = "CREATED";
+		}
+		else if(coffeeName.equals("fancycoffee")) {
+			
+			returnStr="Coffee is being prepared. Please pay $2.50 while the coffee is getting ready";
+
+			price = "2.50";
+			order_status = "CREATED";
+		}
+		else {
+			
+			returnStr="This Coffee option is not being served at this location";
+
+			return returnStr;
+		}
+		
+		Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
+
+
+		String user_id = getUserId();
+		PreparedStatement preparedStmt;
+	
+		System.out.println(order_id + " " + user_id + " " + price + "  ");
+		try {
+
+			con = getDBConnection();
+			String query = " insert into starbucks.orders(order_id,user_id,item,status,price,created_on) values(?,?,?,?,?,?);";	    
+
+			preparedStmt = con.prepareStatement(query);
+			preparedStmt.setString (1, order_id);
+			preparedStmt.setString (2, user_id);
+			preparedStmt.setString (3, coffeeName);
+			preparedStmt.setString (4, order_status);
+			preparedStmt.setString (5, price); 
+			preparedStmt.setTimestamp (6, timestamp);
+
+			int count = preparedStmt.executeUpdate();
+			if (count > 0) {
+				returnStr="Order Created Sucessfully";
+			} else {
+				returnStr="Error in Order Creation";
+			}	            
+			System.out.println("Return Statement: " + returnStr);
+			con.close();
+		} catch (SQLException sqlEx) {
+			returnStr="Error in Order Creation! Please Check StackTrace";
+			System.out.println("Return Statement: " + returnStr);
+			sqlEx.printStackTrace();
+		} 
+
+		return returnStr;
+	}
+	
+	public String getCurrentOrders() {
+		String user_id = getUserId();
+		String returnStr = "";
+	
+		String search = "select item, price, status, created_on from orders where user_id = ?;";
+		System.out.println("query : " + search + user_id);
+
+		Timestamp timestamp = new java.sql.Timestamp(System.currentTimeMillis());
+
+		try {
+			con = getDBConnection();
+			PreparedStatement preparedStmt = con.prepareStatement(search);
+			preparedStmt.setString (1, user_id);
+			ResultSet rs = preparedStmt.executeQuery();
+			rs.last();           
+			int count =  rs.getRow();
+			System.out.println("Rows Count :" + count);
+			rs.first();
+			for(int i = 0; i<count; i++){
+				String item = rs.getString("item");
+				String price = rs.getString("price");
+				String status = rs.getString("status");
+				Timestamp updated = rs.getTimestamp("created_on");
+				System.out.println("Item : " + item + " price "+ price + " " + updated);
+				if(status.equals("PAID")) {
+					if(updated.compareTo(timestamp) >  2000) {
+						status = "DELIVERED"; 
+					}
+				}
+				returnStr += "Item : " + item + " price "+ price + " " + status + "\n";
+				System.out.println("Item : " + item + " price "+ price + " " + updated);
+				rs.next();
+			}
+		} catch (SQLException sqlEx) {
+			System.out.println("Return Statement: " );
+			sqlEx.printStackTrace();
+		}  
+		
+		return returnStr;
+	}
+
 }
