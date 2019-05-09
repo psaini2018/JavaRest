@@ -163,5 +163,28 @@ public class StarbucksResource {
 		return status;     	
 	}
 	
+	@POST
+	@Path("/payment")    
+    //@IJWTTokenMgmt
+	public String payment(@QueryParam("cardnumber") String param)
+	{
+		String scrName;
+		String retStatus;
+		String status;
+		String cardNum = param;
+		scrName = starbucksmodel.MyCardsState(cardNum);
+		if(scrName == "MyCardsPay")
+			System.out.println("Card was added succesfully");
+		else
+			retStatus = "Error In Adding Card Details";
+		double balance = starbucksmodel.ScanCard(cardNum);
+		if(balance > 0)
+			retStatus = "Card Was Scanned Successfully"; //dummy statement
+		else
+			retStatus = "Card May not have scanned"; //just statement
+		status = starbucksmodel.cardBalanceStatus(cardNum, balance, retStatus);
+		return status;
+	}
+	
 }
 

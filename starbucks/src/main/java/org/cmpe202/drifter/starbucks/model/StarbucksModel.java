@@ -84,6 +84,17 @@ public class StarbucksModel implements ICardInputObserver{
 		jsonString = jo.toString();	  
 		return jsonString;  
 	}
+	
+	public String cardBalanceStatus(String cardNum, double balance, String status)
+	{
+		String jsonString;
+		JSONObject jo = new JSONObject();
+		jo.put("cardNumber", cardNum);
+		jo.put("Balance", balance);
+		jo.put("Status", status);
+		jsonString = jo.toString();	  
+		return jsonString;
+	}
 
 	public String ConvertToJsonStr(String status) {
 		String jsonString;
@@ -346,6 +357,91 @@ public class StarbucksModel implements ICardInputObserver{
 		app.display();
 	}
 	
+	public String MyCardsState(String cardNum ) 
+	{
+		String retString;
+		String scrName = app.screen();
+		System.out.println("scrName :" + scrName);
+        if ( scrName.equals("MyCards"))
+        {
+        	app.display();
+        	app.touch(3, 3);
+        	app.display();
+        	return app.screen();
+        }
+        else
+        {
+        	retString ="Error occurred in Card addition";
+        }
+		return retString;
+	}
+	
+	public double getOrderPrice()
+	{
+		return 1.50;
+	}
+	
+	public void updatePaymentStatus(String status)
+	{
+		//update the status in DB.
+	}
+	
+	//Scans the card
+	public double ScanCard(String cardNum)
+	{
+		System.out.println("CardNum: " + cardNum);
+		double curBalance= Cards.getInstance().getCardBalance(cardNum);
+		System.out.println("CardNum: " + curBalance);
+		double balance = 0;
+		System.out.println("Current balance retrieved from DB: " + curBalance);
+		app.display();
+		//app.touch(2, 2);
+		double amount = getOrderPrice();
+		if (curBalance > amount)
+		{			
+			Cards.getInstance().subtractCardBalance(cardNum, amount);
+			updatePaymentStatus("PAID");
+		}
+		else
+		{
+			System.out.println("current balance: " + curBalance + "is not sufficient");
+			//balance = (curBalance);
+		}
+		
+		return Cards.getInstance().getCardBalance(cardNum);
+	}
+	
+	public String getbalance(String cardNum)
+	{
+		
+		String balance = "0.0";
+
+		String search = "select card_id from cards where card_num = ?;";
+		System.out.println("query : " + search + cardNum);
+		try {
+			con = getDBConnection();
+			PreparedStatement preparedStmt = con.prepareStatement(search);
+			preparedStmt.setString (1, cardNum);
+			ResultSet rs = preparedStmt.executeQuery();
+			rs.last();           
+			int count =  rs.getRow();
+			System.out.println("Rows Count :" + count);
+			if (count !=  1) {
+				System.out.println("Return Statement: No Card Exist");   	         	      
+				return null;
+			} else {
+				balance = rs.getString("balance");
+				System.out.println("Return Statement: Card Exist " + balance);   	         	      
+			}
+		} catch (SQLException sqlEx) {
+			System.out.println("Return Statement: " );
+			sqlEx.printStackTrace();
+		}  
+
+		return balance;
+		
+		
+	}
 
 	@Override
 	public void cardDetailUpdate(String number, Double balance, Boolean newCard) {
