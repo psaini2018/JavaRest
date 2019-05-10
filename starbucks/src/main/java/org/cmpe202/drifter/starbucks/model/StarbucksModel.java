@@ -37,8 +37,9 @@ import java.sql.*;
 
 public class StarbucksModel implements ICardInputObserver{
 
-	private static final String mysqlurl = "jdbc:mysql://127.0.0.1:3306/starbucks";
-	private static final String mysqluser = "prod";
+	private static final String mysqlhost = "mysql-prod.clzj1nain3bh.us-west-1.rds.amazonaws.com"; //"127.0.0.1";
+	private static final String mysqlurl = "jdbc:mysql://"+mysqlhost+":3306/starbucks";
+	private static final String mysqluser =  mysqlhost.equals("127.0.0.1") ? "prod" : "ConnectMe";
 	private static final String mysqlpassword = "welcome1";
 
 	private static Connection con;
@@ -192,7 +193,7 @@ public class StarbucksModel implements ICardInputObserver{
 		}     
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/starbucks?useSSL=false","prod","welcome1");
+			con = DriverManager.getConnection("jdbc:mysql://"+mysqlhost+":3306/starbucks?useSSL=false", mysqluser, mysqlpassword);
 			if (con != null)
 			{ 
 				System.out.println("Successfully connected to MySQL database starbucks"); 
@@ -252,7 +253,7 @@ public class StarbucksModel implements ICardInputObserver{
 
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-			dbConnection=DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/starbucks?autoReconnect=true&useSSL=false","prod","welcome1");
+			dbConnection=DriverManager.getConnection("jdbc:mysql://"+mysqlhost+":3306/starbucks?autoReconnect=true&useSSL=false",mysqluser,mysqlpassword);
 			return dbConnection;
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -527,7 +528,7 @@ public class StarbucksModel implements ICardInputObserver{
 		   
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/starbucks?useSSL=false","prod","welcome1");
+			con = DriverManager.getConnection("jdbc:mysql://"+mysqlhost+":3306/starbucks?useSSL=false",mysqluser,mysqlpassword);
 			if (con != null)
 			{ 
 				System.out.println("Successfully connected to MySQL database starbucks"); 
@@ -718,12 +719,14 @@ public class StarbucksModel implements ICardInputObserver{
 				Timestamp updated = rs.getTimestamp("created_on");
 				System.out.println("Item : " + item + " price "+ price + " " + updated);
 				if(status.equals("PAID")) {
-					if(updated.compareTo(timestamp) >  2000) {
+					if ((timestamp.getTime()-updated.getTime()) > 2000) {
+						
 						status = "DELIVERED"; 
 					}
 				}
 				returnStr += "Item : " + item + " price "+ price + " " + status + "\n";
-				System.out.println("Item : " + item + " price "+ price + " " + updated);
+				System.out.println("Item : " + item + " price "+ price + " " + 
+				(timestamp.getTime()-updated.getTime()));
 				rs.next();
 			}
 		} catch (SQLException sqlEx) {
