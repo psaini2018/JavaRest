@@ -84,7 +84,7 @@ public class StarbucksModel implements ICardInputObserver{
 		return jsonString;  
 	}
 	
-	public String cardBalanceStatus(String cardNum, double balance, String status)
+	public String cardBalanceStatus(String cardNum, String balance, String status)
 	{
 		String jsonString;
 		JSONObject jo = new JSONObject();
@@ -443,33 +443,44 @@ public class StarbucksModel implements ICardInputObserver{
 	}
 	
 	//Scans the card
-	public double ScanCard(String cardNum)
+	public String ScanCard(String cardNum)
 	{
 		System.out.println("CardNum: " + cardNum);
 		double curBalance= Cards.getInstance().getCardBalance(cardNum);
-		System.out.println("CardNum: " + curBalance);
+		//System.out.println("CardNum: " + curBalance);
 		double balance = 0;
 		System.out.println("Current balance retrieved from DB: " + curBalance);
 		app.display();
+		String status;
 		//app.touch(2, 2);
 		double amount = getOrderPrice();
-		if (curBalance > amount)
+		System.out.println("Amount :" + amount);
+		if (curBalance > amount && amount != 0.0)
 		{			
 			Cards.getInstance().subtractCardBalance(cardNum, amount);
-			updatePaymentStatus("PAID");
+			status = "PAID";
+			updatePaymentStatus(status);
 		}
-		else
+		else if(curBalance > amount && amount == 0.0)
+		{
+			status = "Nothing Ordered";
+		}
+		else 
 		{
 			System.out.println("current balance: " + curBalance + "is not sufficient");
+			status = "Insufficient balance";
 			//balance = (curBalance);
 		}
 		
-		return Cards.getInstance().getCardBalance(cardNum);
+		//return Cards.getInstance().getCardBalance(cardNum);
+		return status;
 	}
 	
-	public String getbalance(String cardNum)
+	public double getbalance(String cardNum)
 	{
 		
+		double balance = Cards.getInstance().getCardBalance(cardNum);
+		/*
 		String balance = "0.0";
 
 		String search = "select card_id from cards where card_num = ?;";
@@ -493,7 +504,7 @@ public class StarbucksModel implements ICardInputObserver{
 			System.out.println("Return Statement: " );
 			sqlEx.printStackTrace();
 		}  
-
+        */
 		return balance;
 		
 		
@@ -638,13 +649,13 @@ public class StarbucksModel implements ICardInputObserver{
 		
 		if(coffeeName.equals("dripcoffee")) {
 			//Add to db the order id	
-			returnStr="Drip Coffee is ready. Please pay $1.50";
+			returnStr="Drip Coffee is ready. Please pay $1.50. ";
 			price = "1.50";
 			order_status = "CREATED";
 		}
 		else if(coffeeName.equals("fancycoffee")) {
 			
-			returnStr="Coffee is being prepared. Please pay $2.50 while the coffee is getting ready";
+			returnStr="Coffee is being prepared. Please pay $2.50 while the coffee is getting ready. ";
 
 			price = "2.50";
 			order_status = "CREATED";
@@ -678,7 +689,7 @@ public class StarbucksModel implements ICardInputObserver{
 
 			int count = preparedStmt.executeUpdate();
 			if (count > 0) {
-				returnStr="Order Created Sucessfully";
+				returnStr +="Your order Created Sucessfully";
 			} else {
 				returnStr="Error in Order Creation";
 			}	            

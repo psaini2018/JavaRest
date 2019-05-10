@@ -223,12 +223,10 @@ public class StarbucksResource {
 			System.out.println("Card was added succesfully");
 		else
 			retStatus = "Error In Adding Card Details";
-		double balance = starbucksmodel.ScanCard(cardNum);
-		if(balance > 0)
-			retStatus = "Card Was Scanned Successfully"; //dummy statement
-		else
-			retStatus = "Card May not have scanned"; //just statement
-		status = starbucksmodel.cardBalanceStatus(cardNum, balance, retStatus);
+		retStatus = starbucksmodel.ScanCard(cardNum);
+		double balance = starbucksmodel.getbalance(cardNum);
+		String cardbalance = "$" + String.valueOf(balance);
+		status = starbucksmodel.cardBalanceStatus(cardNum, cardbalance, retStatus);
 		return status;
 	}
 	
