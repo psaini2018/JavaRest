@@ -47,8 +47,8 @@
 11.	We are using singleton pattern and so if a new implementation of objects is present then minimal modification is required.
 Deployment:
 1.	We have implemented Microservices architecture, all the APIs has been deployed to individual AWS cloud environments to have a proper decoupling between them.
-2.	Deployed Order Management and Card Management API to AWS Docker Containers using ECS.
-3.	Deployed Sign In / Sign Up and Payment API to AWS in an Auto Scaled EC2 Cluster with Load Balancer.
+2.	Deployed all APIs to AWS Docker Containers using ECS with Load Balancer.
+3.	Deployed all APIs to AWS in an Auto Scaled EC2 Cluster with Load Balancer.
 
 ### Screen Mockup /WireFrames
         
