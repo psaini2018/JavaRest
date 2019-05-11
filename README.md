@@ -4,30 +4,29 @@
 ### Team Members:
 
 ### Student Name	Contribution
-#### Juilan Simon	Add Card
-#### Paramdeep Saini	User Profile and Authentication 
-#### Sandhya Gadgoli	Manage Order
-#### Viswanath Kambam	Payments API
+#### Juilan Simon - Add Card
+#### Paramdeep Saini - User Profile and Authentication 
+#### Sandhya Gadgoli - Manage Order
+#### Viswanath Kambam - Payments API
 
 
 ### Table Of Contents:
-•	Introduction
-•	Design Decisions and Feature List
-•	Cloud Deployment
-•	Architecture Diagram
-•	Component Diagram
-•	Deployment Diagram
-•	Tools
-•	Links
+•	Introduction  
+•	Design Decisions and Feature List  
+•	Cloud Deployment  
+•	Architecture Diagram  
+•	Component Diagram  
+•	Deployment Diagram  
+•	Tools  
+•	Links  
 
 ### Introduction:
 •	Requirement is to implement a full end-to-end Starbucks order management RESTful application.
-•	Develop REST API and use the business logic code as a JAR library.
-•	Deploy API to AWS in an Auto Scaled EC2 Cluster with Load Balancer
-•	Deploy API to AWS as Docker Containers in Amazon Containers
-•	Deploy API to AWS as Docker Containers in Amazon EKS
-•	Follow Scrum/Kanban methodologies for tracking the tasks and progress.
-•	Maintain a UML Class Diagram and a Sequence Diagram using professional tool like Astah UML.
+•	Develop REST API and use the business logic code as a JAR library.  
+•	Deploy API to AWS in an Auto Scaled EC2 Cluster with Load Balancer  
+•	Deploy API to AWS as Docker Containers in Amazon Containers  
+•	Follow Scrum/Kanban methodologies for tracking the tasks and progress.  
+•	Maintain a UML Class Diagram and a Sequence Diagram using professional tool like Astah UML.  
 
 #### Design decisions and feature List	
 1.	We decided to keep the application completely stateless. REST is an architectural style which is based on web-standards and the HTTP protocol. In a REST based architecture, you have a REST server which provides access to the resources. We have used gradle project in the Main starbucks-app , it’s JAR is imported checked in as an artifact. 
