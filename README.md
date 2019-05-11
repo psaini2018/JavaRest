@@ -58,15 +58,15 @@ Deployment:
 
 
 ### Architecture Diagram
- 
+![ArchitectureDiagram](https://user-images.githubusercontent.com/42687217/57563298-2ca3fa80-7351-11e9-9fe9-67da5bd01bac.jpg)
 
 ### Component Diagram
- 
 
+![Component Diagram](https://user-images.githubusercontent.com/42687217/57563323-696ff180-7351-11e9-8efa-dd425ea862f0.jpg)
 
 
 ### Deployment Diagram
- 
+ ![Deployment Diagram](https://user-images.githubusercontent.com/42687217/57563316-59581200-7351-11e9-9afa-cd99254cc9a1.jpg)
 
 ### Tools
 
@@ -86,8 +86,8 @@ Open Postman or browser to test APIs.(refer configurations for URI and payload)
 
 
 #### Links
-	Team's GitHub Repo
-	Project Journal
-	Team XP core values
-	Google Sprint Task Sheet
+Team's GitHub Repo
+Project Journal
+Team XP core values
+Google Sprint Task Sheet
 
