@@ -37,11 +37,12 @@
 5.	We are needed output in json format hence added artifact id: jersey-media-json-jackson.
 6.	MySql for Data base
 7.	Maven for dependency management
-8.	Implemented the following components:
-	User profile and authentication API
-	Order Management API
-	Card Management API
-	Payment API
+8.	Implemented the following components:  
+        User profile and authentication API  
+        Order Management API   
+        Card Management API   
+        Payment API    
+        
 9.	Each customer can have only 1 card at a time he/she can update its balance or replace with a whole new card.
 10.	Each customer can have only 1 open order at a time and must pay for a new order.
 11.	We are using singleton pattern and so if a new implementation of objects is present then minimal modification is required.
@@ -70,10 +71,10 @@ Deployment:
 
 ### Tools
 
-Eclipse
-Gradle with jdk 1.8 
-Apache Tomcat
-Postman
+Eclipse  
+Gradle with jdk 1.8  
+Apache Tomcat  
+Postman  
 
 ### Steps
 1.	Download repo psaini2018/JavaRest 
@@ -85,9 +86,9 @@ Run the Application on tomcat
 Open Postman or browser to test APIs.(refer configurations for URI and payload)
 
 
-#### Links
-Team's GitHub Repo
-Project Journal
-Team XP core values
-Google Sprint Task Sheet
+#### Links  
+Team's GitHub Repo  
+Project Journal  
+Team XP core values  
+Google Sprint Task Sheet  
 
